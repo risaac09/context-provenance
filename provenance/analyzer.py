@@ -121,6 +121,10 @@ def _extract_sources(
             block.get("text", "") for block in content
             if isinstance(block, dict)
         )
+    elif isinstance(content, dict):
+        content = json.dumps(content, ensure_ascii=False)
+    elif not isinstance(content, str):
+        content = str(content or "")
 
     # Tool use blocks — these are the authoritative source; process first.
     tool_uses = msg.get("tool_calls", []) or msg.get("tool_use", [])
@@ -175,8 +179,28 @@ def _classify_tool(
     """Classify a tool call into the appropriate channel."""
     name_lower = name.lower()
 
+    # Memory tools → Channel 3. Check before generic reads/searches because
+    # names such as memory_search and read_session overlap those categories.
+    if any(k in name_lower for k in ["memory", "transcript", "session"]):
+        _add_source_deduped(record, Source(
+            channel=ChannelType.CONVERSATION,
+            label=name,
+            description=f"Memory/session access: {name}",
+            retrievable=True,
+        ), seen)
+
+    # Skill invocations → Channel 1
+    elif "skill" in name_lower:
+        skill_name = args.get("skill") or args.get("name", name)
+        _add_source_deduped(record, Source(
+            channel=ChannelType.SKILL,
+            label=str(skill_name),
+            description=f"Skill invoked: {skill_name}",
+            retrievable=True,
+        ), seen)
+
     # File reads → Channel 2
-    if any(k in name_lower for k in ["read", "cat", "file", "download"]):
+    elif any(k in name_lower for k in ["read", "cat", "file", "download"]):
         path = args.get("file_path") or args.get("path") or args.get("filePath", "")
         _add_source_deduped(record, Source(
             channel=ChannelType.RETRIEVED,
@@ -194,25 +218,6 @@ def _classify_tool(
             label=str(query)[:60] if query else name,
             description=f"Web access via {name}",
             url=args.get("url"),
-            retrievable=True,
-        ), seen)
-
-    # Memory tools → Channel 3
-    elif any(k in name_lower for k in ["memory", "transcript", "session"]):
-        _add_source_deduped(record, Source(
-            channel=ChannelType.CONVERSATION,
-            label=name,
-            description=f"Memory/session access: {name}",
-            retrievable=True,
-        ), seen)
-
-    # Skill invocations → Channel 1
-    elif "skill" in name_lower:
-        skill_name = args.get("skill") or args.get("name", name)
-        _add_source_deduped(record, Source(
-            channel=ChannelType.SKILL,
-            label=str(skill_name),
-            description=f"Skill invoked: {skill_name}",
             retrievable=True,
         ), seen)
 

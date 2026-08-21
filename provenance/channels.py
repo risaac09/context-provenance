@@ -31,6 +31,10 @@ class Source:
     retrievable: bool = True
     timestamp: Optional[str] = None
 
+    def __post_init__(self):
+        if self.weight is not None and not 0.0 <= self.weight <= 1.0:
+            raise ValueError("weight must be between 0.0 and 1.0")
+
     def to_dict(self) -> dict:
         d = {
             "channel": self.channel.value,
