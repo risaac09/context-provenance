@@ -111,6 +111,17 @@ pip install -e .
 
 No dependencies beyond Python 3.10+ standard library.
 
+## Development
+
+Run the standard-library test suite:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+GitHub Actions runs the same suite on supported Python versions and rebuilds
+the worked example to catch drift in its committed JSON and HTML.
+
 ## What This Is Not
 
 This is not Lanier's counterfactual cluster estimation. That requires access to model internals (attention weights, activation patterns, training data indices). It is a prototype of application-layer provenance: tracking what is knowable from outside the model, presenting it in parallel, and marking the rest as a gap.
