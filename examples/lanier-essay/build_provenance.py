@@ -62,7 +62,7 @@ def build():
     record.add_source(Source(
         channel=ChannelType.RETRIEVED,
         label="Bergsonism (Deleuze, 1966)",
-        description="Referenced directly in the essay. Isaac was reading this with Paul (history PhD at Brown) in a book club that predated the Lanier event. Shaped the Bergson-duration-cutting argument.",
+        description="Referenced directly in the essay. Isaac was reading this with Paul in a book club that predated the Lanier event. Shaped the Bergson-duration-cutting argument.",
         retrievable=True,
         url="https://www.zonebooks.org/books/53-bergsonism",
     ))
@@ -107,13 +107,13 @@ def build():
     record.add_source(Source(
         channel=ChannelType.CONVERSATION,
         label="Post-event conversation with Stephon Alexander",
-        description="Isaac reached out to Stephon after the event. Response pending at time of publication.",
+        description="Isaac reached out to Stephon after the event. The exchange happened outside any system, so nothing from it is retrievable here.",
         retrievable=False,
     ))
     record.add_source(Source(
         channel=ChannelType.CONVERSATION,
         label="Post-event exchange with Donnie Aikins",
-        description="Donnie gave Isaac his number after the concert. Named in acknowledgments.",
+        description="An exchange after the concert, which entered the essay through Isaac's account of it rather than through any record. Named in the acknowledgments.",
         retrievable=False,
     ))
 
